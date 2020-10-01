@@ -49,4 +49,41 @@ removeAttribute(String name):移除指定的属性
 ④.请求的转发：/代表是当前WEB应用的根目录
   请求的重定向：/代表的是当前WEB站点的根目录.
 
-2).
+
+<JSP>
+
+4.jsp:include标签：
+
+1).<jsp:include page="b.jsp"></jsp:include>
+
+2).动态引入：并不是像include指令生成一个Servlet源文件，而是生成两个Servlet源文件，然后通过一个方法的方式把目标页面包含进来.
+
+5.jsp:forward:
+
+1).<jsp:forward page="include/b.jsp"></jsp:forward>
+
+相当于==》
+
+<%
+	request.getRequestDispatcher("/include/b.jsp").forward(request, response);
+%>
+
+2).使用jsp:forward 可以使用jsp:param子标签向b.jsp传入一些参数，同样jsp:include也可以使用jsp:param子标签.
+
+<jsp:forward page="/include/b.jsp">
+	<jsp:param value="123" name="zfl"/>
+</jsp:forward>
+
+OR
+
+<jsp:include page="/include/b.jsp">
+	<jsp:param value="123" name="zfl"/>
+</jsp:include>
+
+在b.jsp页面可以通过request.getParameter("username")获取到传入的请求参数.
+
+
+
+
+
+
