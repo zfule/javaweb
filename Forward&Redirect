@@ -66,6 +66,45 @@ removeAttribute(String name):移除指定的属性
 <%@page session="false"%>
 
 ③.errorPage和isErrorPage:
+>errorPage指定若当前页面出现错误的实际响应页面是什么，其中/表示的是当前WEB应用的根目录.
+<%@page errorPage="/error.jsp"%>
+
+>在响应error.jsp时，JSP引擎使用的是请求转发方式
+
+>isErrorPage指定当前的页面是否为错误处理页面，可以说明当前页面是否可以使用exception隐藏变量，需要注意的是：若指定isErrorPage="true",并使用exception的方法了，一般不建议能够直接访问该页面.
+
+>如何使客户不能直接访问某一个页面呢？对于Tomcat服务器而言，WEB-INF下的文件是不能通过浏览器中输入地址的方式来访问，但可以通过请求的转发来访问！
+
+>还可以在web.xml文件中配置错误页面：
+
+  <error-page>
+  	<!-- 指定出错的代码：404没有指定的资源，500内部错误 -->
+  	<error-code>404</error-code>
+  	<location>/hello.jsp</location>
+  </error-page>
+  
+  <error-page>
+  	<!-- 指定异常类型 -->
+  	<exception-type>java.lang.ArithmeticException</exception-type>
+  	<location>/WEB-INF/error.jsp</location>
+  </error-page>
+
+④.contentType:指定当前JSP页面的响应类型，实际调用的是response.setContentType("text/html;charset=UTF-8");
+通常情况下，对于JSP页面而言其取值均为text/html;charset=UTF-8,charset指定返回的页面的字符编码是什么，通常取值为UTF-8.
+
+⑤.pageEncoding:指定当前JSP页面的字符编码，通常情况下该值和contentType中的charset一致.
+
+⑥.isELIgnored:指定当前JSP页面是否可以使用EL表达式，通常取值为false.
+
+3.include指令：<%@include file="b.jsp"%>
+
+1).include指令用于通知JSP引擎在翻译当前JSP页面时将其他文件中的内容合并进当前JSP页面转换成的Servlet源文件中.
+这种在源文件级别进行引入的方式称为静态引入，当前JSP页面与静态引入的页面紧密结合为一个Servlet.
+
+2).file属性的设置值必须使用相对路径
+
+3).如果以/开头，表示相对于当前WEB应用程序的根目录(注意不是站点目录),否则，表示相对于当前文件.推荐使用/的方式包含页面.
+使用绝对路径肯定没问题，使用相对路径可能会有问题！
 
 4.jsp:include标签：
 
