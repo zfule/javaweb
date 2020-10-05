@@ -1,0 +1,17 @@
+查询操作：
+
+Servlet
+
+  -//1.调用CustomerDAO的getAll()得到Customer的集合
+		List<Customer> customers = customerDAO.getAll();
+    
+  -//2.把Customer的集合放入request中
+		request.setAttribute("customers", customers);
+    
+  -//3.转发页面到Index.jsp(不能够使用重定向)
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
+    
+JSP
+
+  -获取request中的customers属性
+  -遍历显示
