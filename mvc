@@ -1,3 +1,36 @@
+1).Servlet映射为*.do:可以接受一切.do结尾的请求
+
+  <servlet-mapping>
+  	<servlet-name>CustomerServlet</servlet-name>
+  	<url-pattern>*.do</url-pattern>
+  </servlet-mapping>
+  
+2).在Servlet的doGet和doPost方法中：
+	
+//		1.获取ServletPath:/edit.do 或 /addCustomer.do
+		String servletPath = req.getServletPath();
+		
+//		2.去除/和.do,得到类似于edit或addCustomer这样的字符串
+		String methodName = servletPath.substring(1);
+		methodName = methodName.substring(0,methodName.length() - 3);
+		
+		try {
+//			3.利用反射获取methodName对应的方法
+			Method method = getClass().getDeclaredMethod(methodName, HttpServletRequest.class,HttpServletResponse.class);
+//			4.利用反射调用对应的方法
+			method.invoke(this, req,resp);
+		} catch (Exception e) {	
+//			e.printStackTrace();
+//			可以有一些响应
+			resp.sendRedirect("error.jsp");
+			
+		}
+		
+
+
+
+
+"""
 查询操作：
 
 Servlet
@@ -15,3 +48,4 @@ JSP
 
   -获取request中的customers属性
   -遍历显示
+  """
