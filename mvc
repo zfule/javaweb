@@ -1,3 +1,9 @@
+2.整体的架构:MVC到底如何使用：
+
+jsp-->Servlet-->DAO-->MySQL-->DAO-->Servlet-->jsp
+
+2.多个请求对应一个Servlet
+
 1).Servlet映射为*.do:可以接受一切.do结尾的请求
 
   <servlet-mapping>
@@ -26,10 +32,73 @@
 			
 		}
 		
+3.查询：MVC的整个过程
 
+query.do-->doPost-->query
 
+query方法的代码：
 
+//		1.调用CustomerDAO的getAll()得到Customer的集合
+		List<Customer> customers = customerDAO.getForListWithCriteriaCustomer(cc);
+		
+//		2.把Customer的集合放入request中
+		request.setAttribute("customers", customers);
+		
+//		3.转发页面到Index.jsp(不能够使用重定向)
+		request.getRequestDispatcher("/index.jsp").forward(request, response);
 
+JSP：获取request中的customers属性，遍历显示
+	<%
+		List<Customer> customers = (List<Customer>)request.getAttribute("customers");
+			for(Customer customer :customers){
+		%>
+				<tr>
+					<td><%= customer.getTeacherno() %></td>
+					<td><%= customer.getTname() %></td>
+					<td><%= customer.getMajor() %></td>
+					<td><%= customer.getProf() %></td>
+					<td><%= customer.getDepartment() %></td>
+					<td>
+						<a href="">UPDATE</a>
+						<a href="delete.do?teacherno=<%= customer.getTeacherno() %>" class="delete">DELETE</a>
+					</td>
+				</tr>
+		
+		<% 		
+			}
+		%>
+
+4.模糊查询：
+
+1)正常的SQL：
+
+String sql = "SELECT teacherno,tname,major,prof,department FROM teacher "
+				+ "WHERE teacherno LIKE ? AND tname LIKE ? AND major LIKE ? AND "
+				+ "prof LIKE ? AND department LIKE ?";
+
+2).填充占位符的技巧：以tname属性为例：若tname字段为null,返回"%%";若不为null,返回"%"+name+"%"
+
+	public String getTname() {
+		if(tname == null)
+			tname = "%%";
+		else
+			tname = "%" + tname + "%";
+		return tname;
+	}
+3).把查询条件封装为javabean
+
+public class CriteriaCustomer {
+	
+	private String teacherno;
+	private String tname;
+	private String major;
+	private String prof;
+	private String department;
+	
+	//...
+}
+
+5.
 """
 查询操作：
 
