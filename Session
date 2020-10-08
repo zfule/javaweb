@@ -1,0 +1,50 @@
+1.HttpSession生命周期：
+
+1).什么时候创建HttpSession对象
+
+①.对于JSP：是否浏览器访问服务器端的任何一个JSP或Servlet，服务器都会立即创建一个HttPSession对象呢？不一定。
+  ->若当前的JSP(或Servlet)是客户端访问的当前WEB应用的第一个资源，且JSP的page指定的session属性值为false,
+则服务器就不会为JSP创建一个HttpSession对象；
+
+  ->若当前JSP不是客户端访问的当前WEB应用的第一个资源，且其他页面已经创建一个HttpSession对象，则服务器也不会为
+当前JSP页面创建一个新的HttpSession对象，而会把当前会话关联的那个HttpSession对象返回给当前的JSP页面
+
+session="false" 到底表示什么意思呢？当前JSP页面禁用session隐含变量！但可以使用其他显示的HttpSession对象
+
+②.对于Servlet而言，若Servlet是客户端访问的第一个WEB应用的资源，则只有调用了request.getSession()
+或request.getSession(true)才会创建HttpSession对象
+
+2).page指令的session="false"到底表示什么意思？
+  
+    >当前JSP页面禁用session隐含变量！但可以使用其他的显示的HttpSession对象
+ 
+3).在Servlet中如何获取HttpSession对象？
+
+  >request.getSession(boolean create): 
+  create为false,若没有当前JSP页面关联的HttPSession对象则返回false;若有，则返回true 
+  create为true，一定返回一个HttpSession对象，若没有和当前JSP页面关联的HttpSession对象，则服务器创建一个
+  HTTP Session对象返回，若有直接返回关联的
+  
+  >request.getSession():等同于request.getSession(true)
+  
+ 4).什么时候销毁HttpSession对象：
+ 
+ ①.直接调用HttpSession的ivalidate()方法：该方法使HttpSession失效
+ 
+ ②.服务器卸载了当前web应用.
+ 
+ ③.超出HttpSession的过期时间：
+ 
+    ->session.setMaxInactiveInterval(5);单位为秒
+  
+    ->在web.xml文件中设置HttpSession的过期时间：单位为分钟
+    
+        <!-- ==================== Default Session Configuration ================= -->
+  <!-- You can set the default session timeout (in minutes) for all newly   -->
+  <!-- created sessions by modifying the value below.                       -->
+
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+
+④.并不是关闭浏览器就销毁session
