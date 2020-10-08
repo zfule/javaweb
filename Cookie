@@ -1,0 +1,56 @@
+问题是什么？有哪些技术？如何解决？
+
+1.Cookie:
+
+1).完成会话跟踪的一种机制：采用的是在客户端保持HTTP状态信息的方案
+2).Cookie是在浏览器访问WEB服务器某个资源时，由WEB服务器在HTTP消息头中附带传送给浏览器的一个小文本文件
+3).
+                        ①第一次访问不存在Server1的Cookie       ②.第一次访问请求
+      |Cookie缓冲区    | --------------------->  |浏览器   |  --------------------->  |WEB Server1  |
+      |Cookie缓冲区    | ④写入                   |浏览器   |  ③第一次响应             |WEB Server1  |
+      |Server1的Cookie | Server1的Cookie         |浏览器   |  Set-Cookie: zfl         |WEB Server1  |
+      |Server1的Cookie | <---------------------  |浏览器   |  <---------------------  |WEB Server1  |
+      |Cookie缓冲区    | --------------------->  |浏览器   |  --------------------->  |WEB Server1  |
+      |Server2的Cookie | --------------------->  |浏览器   |  --------------------->  |WEB Server1  |
+      |Cookie缓冲区    | --------------------->  |浏览器   |  --------------------->  |WEB Server1  |
+
+4).底层实现原理；WEB服务器通过在HTTP响应消息中增加Set-Coojie响应头字段将Cookie信息发送给浏览器
+
+2.Cookie相关的API：
+
+1).向客户端浏览器写入Cookie
+
+			//1.创建一个Cookie对象
+			Cookie cookie = new Cookie("name","zhangfl");
+      //2.设置setMaxAge：设置Cookie的最大时效，以秒为单位，若为0，则表示立即删除该Cookie
+      //若为负数则表示不存储该Cookie,若为整数则表示该Cookie的存储时间
+			cookie.setMaxAge(30);
+      //3.设置Cookie作用范围：可以作用当前目录和当前目录的子目录，但不能作用于当前目录的上一级目录
+			cookie.setPath(request.getContextPath());
+			//4.调用response的一个方法把Cookie转给客户端
+			response.addCookie(cookie);
+
+2).从浏览器读取Cookie
+
+		Cookie[] cookies =  request.getCookies();
+		if(cookies != null && cookies.length > 0){
+			for(Cookie cookie : cookies){
+				if("cookiePath".equals(cookie.getName())){
+					cookieValue = cookie.getValue();
+				}
+			}
+		}
+
+3.会话cookie和持久cookie
+
+1).如果不设置过期时间，则表示这个cookie生命周期为浏览器会话期间，只要关闭浏览器窗口，cookie就消失了。
+这种生命期为浏览器会话期的cookie被称为会话cookie。会话cookie一般不保存在硬盘上而是保存在内存里。
+
+2).如果设置了过期时间，浏览器就会把cookie保存到硬盘上，关闭后再次打开浏览器，这些cookie依然有效直到超过设定的期限。
+
+4.两个应用：
+
+1).自动登录
+
+2).显示浏览过的商品信息
+
