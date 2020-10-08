@@ -31,9 +31,9 @@ session="false" 到底表示什么意思呢？当前JSP页面禁用session隐含
  
  ①.直接调用HttpSession的ivalidate()方法：该方法使HttpSession失效
  
- ②.服务器卸载了当前web应用.
+ ②.服务进程被停止(或服务器卸载了当前web应用.)
  
- ③.超出HttpSession的过期时间：
+ ③.超出HttpSession的有效时间：
  
     ->session.setMaxInactiveInterval(5);单位为秒
   
@@ -47,4 +47,45 @@ session="false" 到底表示什么意思呢？当前JSP页面禁用session隐含
         <session-timeout>30</session-timeout>
     </session-config>
 
-④.并不是关闭浏览器就销毁session
+④.关闭浏览器只会是存储在客户端浏览器内存中的session cookie失效，不会是服务器端的session对象失效
+
+2.HttpSession的相关API
+
+1).获取Session对象：request.getSession()，request.getSession(boolean create)
+
+2).属性相关的setAttribute,getAttribute,removeAttribute
+
+3).使HttpSession失效的：invalidate()方法
+
+4).设置其最大失效的setMaxInactiveInterval
+
+3).URL 重写：
+
+1).Servlet规范引入了一种补充的会话管理机制，它允许不支持Cookie的浏览器也可以与WEB服务器保持连续的会话
+
+2).将会话标识号以参数形式附加在超链接的URL地址后面的技术称为URL重写
+
+3).代码：
+ 
+ 	<a href="<%= response.encodeURL("login.jsp") %>">重新登陆</a>
+	&nbsp;&nbsp;&nbsp;&nbsp;
+	<a href="<%= response.encodeURL("logout.jsp") %>">注销</a>	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
