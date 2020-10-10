@@ -59,7 +59,7 @@ session="false" 到底表示什么意思呢？当前JSP页面禁用session隐含
 
 4).设置其最大失效的setMaxInactiveInterval
 
-3).URL 重写：
+3.URL 重写：
 
 1).Servlet规范引入了一种补充的会话管理机制，它允许不支持Cookie的浏览器也可以与WEB服务器保持连续的会话
 
@@ -71,12 +71,55 @@ session="false" 到底表示什么意思呢？当前JSP页面禁用session隐含
 	&nbsp;&nbsp;&nbsp;&nbsp;
 	<a href="<%= response.encodeURL("logout.jsp") %>">注销</a>	
 
+4.绝对路径问题：
 
+1).开发时建议编写“绝对路径”：写绝对路径肯定没有问题，相对路径可能出现问题
 
+在由Servlet转发到JSP页面时，此时浏览器地址栏上显示的是Servlet的路径，而若JSP页面的超链接还是相对于该
+JSP页面的地址，则可能出现路径混乱的问题.
 
+see project[day_1009]
 
+/a.jsp
+	-path
+		/b.jsp
+		/c.jsp
 
+a.jsp->/Servlet-转发->b.jsp(有一个超链接：和b.jsp在同一路径下的c.jsp)->无法得到页面
 
+2).编写绝对路径可以避免上述问题：
+
+①.在JavaWEB中什么叫“绝对路径”：相当于当前contextPath的路径。任何的路径都需要带上contentPath
+
+http://localhost:8080/day_1009(当前WEB应用的上下文路径)/a.jsp √
+http://localhost:8080/a.jsp ×
+
+②.如何编写绝对路径:若/代表的是站点的根目录，在其前加上contextPath就可以了.而contextPath可以
+由request或application的getContextPath()方法来获取
+
+<a href="<%= request.getContextPath()%>/TestServlet">To B Page</a>
+response.sendRedirect(request.getContextPath() + "/path/c.jsp");
+
+3).JavaWEB开发中的/到底代表什么？
+
+①.JavaWEB应用的根路径：http://localhost:8080/contextPath/: 若/需交由Servlet容器来处理
+
+ > 请求转发时：request.getRequestDispatcher("/path/b.jsp").forward(request, response);
+ 
+ > web.xml 文件中映射Servlet访问路径
+ 
+ <servlet-mapping>
+ 	<servlet-name>TestServlet</servlet-name>
+	<url-pattern>/TestServlet</url-pattern>
+ </servlet-mapping>
+ 
+ > 各种定制标签中的/
+ 
+ ②.WEB站点的根路径：http://localhost:8080/：若/交由浏览器来处理
+
+ > 超链接：<a href="/TestServlet">To B Page</a>
+ > 表单中的action:<form action="/login.jsp">
+ > 做请求重定向的时候：response.sendRedirect("/a.jsp")
 
 
 
