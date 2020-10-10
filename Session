@@ -121,7 +121,16 @@ response.sendRedirect(request.getContextPath() + "/path/c.jsp");
  > 表单中的action:<form action="/login.jsp">
  > 做请求重定向的时候：response.sendRedirect("/a.jsp")
 
+5.表单的重复提交
 
+1).重复提交的情况：
+
+①.在表单提交到一个Servlet，而Servlet又通过请求转发的方式响应一个JSP(HTML)页面，
+此时地址栏还保留着Servlet的那个按钮，在响应页面点击“刷新”
+②.在响应页面没有达到时重复点击“提交按钮”
+③.点击“返回”，再点击“提交”
+
+2).不是重复提交的情况：点击“返回”，“刷新”原表单页面，再“提交”
 
 
 
