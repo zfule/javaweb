@@ -66,6 +66,72 @@ scriptless:代表可以有标签体，但标签体不能是任何Java脚本，�
   	</attribute>
   </tag>
 
+6).自实现c:forEach功能
+
 2.带父标签的标签
 
+1).长得样子：
+
+<c:choose>
+	<c:when test="${param.age > 24}">大学毕业</c:when>
+	<c:when test="${param.age > 20}">高中毕业</c:when>
+	<c:otherwise>高中以下。。。</c:otherwise>
+</c:choose>
+
+2).应该知道的：
+
+父标签无法获取子标签的引用，父标签仅把子标签作为标签体来使用。但子标签可以来获取父标签的引用，
+通过getParent（）方法来获取。可以在子标签中对父标签进行强制的类型转换以获取父标签的细节。
+
+3).注意：在tld配置文件中，无需为父标签有额外的配置，但子标签是以标签体的形式存在，所以父标签的
+<body-content></body-content>需设置为scriptless即<body-content>scriptless</body-content>：
+
+ChooseTag chooseTag = (ChooseTag) getParent();
+boolean flag = chooseTag.isFlag();
+
+if(flag) {
+	getJspBody().invoke(null);
+	chooseTag.setFlag(false);
+}
+
+4).自实现c:choose,c:when,c:otherwise标签
+
 3.EL的自定义函数
+
+1).步骤：
+
+在一个public类中定义一个public的static方法-->在tld文件中对EL的自定义函数进行描述-->使用
+
+package cn.zhangfl.javaweb;
+
+public class MyELFunction {
+	public static String concat(String str1, String str2) {
+		return str1 + str2;
+		
+	}
+}
+
+ <function>
+ 	<name>concat2</name>
+ 	<function-class>cn.zhangfl.javaweb.MyELFunction</function-class>
+ 	<function-signature>java.lan.String concat(java.lang.String, java.lang.String)</function-signature>	
+ </function>
+ 
+ ${zfl:concat(param.name1, param.name2) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
