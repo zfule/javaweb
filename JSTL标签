@@ -1,0 +1,71 @@
+1.带标签体的标签
+
+1).长的样子：
+
+<c:forEach items="${requestScope.customers }" var="cust">
+		${cust.id } -- ${cust.name } <br>
+</c:forEach>
+
+2).在定义标签中，使用JspFragment对象来表示标签体
+
+3).如何得到代表标签体的JspFragment:
+
+在SimpleTag接口中有一个setJspBody(JspFragment jspBody),若在tld描述文件中配置了标签有标签体，
+则JSP引擎就会调用该方法把代表标签体的JspFragment对象传给标签处理器类
+
+在SimpleTagSupport中,实现了setJspBody(JspFragment jspBody)方法，并且定义了getJspBody()方法返
+回JspFragment对象：
+private JspFragment jspBody;
+
+public void setJspBody(JspFragment jspBody){
+  this.jspBody = jspBody;
+}
+
+protected JspFragment getJspBody(){
+  return this.jspBody;
+}
+
+若标签处理器类继承了SimpleTagSupport,则可以直接调用getJspBody()得到JspFragment对象的引用：
+
+//把标签体的内容直接输出到页面上
+getJspBody().invoke(null);
+
+4).JspFragment中的常用的API
+
+invoke(Writer):把标签体的内容输出到Writer指定的字符流中。
+
+    //1.得到标签体的内容
+		JspFragment bodyContet = getJspBody();
+		StringWriter sw = new StringWriter();
+		bodyContet.invoke(sw);
+		String content = sw.toString();
+		//2.变为大写
+		content = content.toUpperCase();
+    //3.输出
+    getJspContext().getOut().print(content)
+    
+5).tld文件中的配置问题：body-content来配置标签体的类型
+
+empty:代表标签体是空的
+scriptless:代表可以有标签体，但标签体不能是任何Java脚本，包括表达式，但可以是EL。
+
+<tag>
+  	<name>forEach</name>
+  	<tag-class>cn.zhangfl.javaweb.ForEachTag</tag-class>
+  	<body-content>scriptless</body-content>
+  	
+  	<attribute>
+  		<name>items</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  	<attribute>
+  		<name>var</name>
+  		<required>true</required>
+  		<rtexprvalue>true</rtexprvalue>
+  	</attribute>
+  </tag>
+
+2.带父标签的标签
+
+3.EL的自定义函数
