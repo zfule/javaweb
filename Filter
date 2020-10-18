@@ -42,5 +42,5 @@
       
       - 多个Filter拦截顺序和<filter-mapping>配置的顺序有关，靠前的先被调用。
   
-  > public void destroy()：释放当前Filter所占用的资源的方法，在Filter被销毁之前被调用，且只被调用一次
+  > public void destroy()：类似Servlet的destory()方法。释放当前Filter所占用的资源的方法，在Filter被销毁之前被调用，且只被调用一次
 
