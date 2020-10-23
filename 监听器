@@ -27,11 +27,92 @@ ServletContextListener:
     
     ServletContextEvent中的：getServletContext()获取ServletContext
   
+1.监听器：专门用于对其它对象身上发生的事件或者状态改变进行监听和相应处理的对象，当被监视的对象发生情况时，立即采取相应的行动。
   
+2.监听器的分类：
   
+1).监听域对象(pageContext,request,application)自身的创建和销毁的事件监听器
+
+2).监听域对象中的属性的增加和删除的事件监听器
+
+3).监听绑定到HttpSession域中的某个对象的状态的事件监听器
+
+3.如何编写监听器：
+
+1).编写实现监听器接口的Java类
+
+public class HelloServletContextListener implements ServletContextListener
+
+2).对于第一种监听器和第二种监听器需要在web.xml文件中注册：
+
+<listener>
+	<listener-class>cn.zhangfl.javaweb.HelloServletContextListener</listener-class>
+</listener>
+
+4.监听域对象(HttpSession,request,application)自身的创建和销毁的事件监听器
+
+1).ServletContextListener:常用的Listener,可以在当前WEB应用被加载时对当前WEB应用的相关资源进行初始化操作：
+  创建数据库连接池，创建Spring的IOC容器，读取当前WEB应用的初始化参数。。。
   
+2).ServletRequestListener
+
+3).HttpSessionListener
+
+在每一个监听器中都有两个方法：
+
+	> 在域对象创建后立即被调用的方法:
+	> 在于对象销毁前被调用的方法:
+	
+方法的参数：以ServletContextEvent为例，该对象可以返回ServletContext对象
+
+5.监听域对象中的属性的增加和删除的事件监听器(了解)
+
+1).以ServletRequestAttributeListener为例：
+
+public void attributeAdded(ServletRequestAttributeEvent srae) {
+	System.out.println("向request中添加了一个属性。。。" + srae.getName() + "::" + srae.getValue());
+}
+public void attributeRemoved(ServletRequestAttributeEvent srae) {
+	System.out.println("从request中移除了一个属性。。。" + srae.getName() + "::" + srae.getValue());
+}
+public void attributeReplaced(ServletRequestAttributeEvent srae) {
+	System.out.println("request中属性置换" + srae.getName() + "::" + srae.getValue());
+}
+
+2).这三个ServletContextAttributeListener, ServletRequestAttributeListener, HttpSessionAttributeListener
+监听器很少使用
+
+3).API
+
+ServletRequestAttributeEvent:
+
+ > getName():获取属性的名字
+ > getValue():获取属性的值
   
-  
+6. 监听绑定到HttpSession域中的某个对象的状态的事件监听器
+
+7.统计在线访客
+
+1).利用HttPSessionListener可以知道是否有新的访问去访问当前的WEB应用，若
+
+public void sessionCreated(HttpSessionEvent se)被调用，说明有新访客到来；若
+
+public void sessionDestroyed(HttpSessionEvent se)被调用，说明访客离开。
+
+2).可以使用一个JSP页面显示当前的访客：
+
+访客共有xx人，其中匿名访客xx人，注册用户xx人。
+
+访客IP			  操作	
+
+127.0.0.1(匿名客户)		踢出	
+223.21.21.1		    踢出	
+子乐可乐(登陆客户)	    踢出
+
+踢出效果为：若正在访问一个必须登陆页面，再点击刷新，发现该页面无法访问，而需要先登录
+
+3).踢出操作：即让其session失效
+
   
   
   
