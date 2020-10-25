@@ -1,3 +1,23 @@
+2.基本思想：
+ 
+ > commons-fileupload可以解析请求，得到一个FileItem对象组成的List
+ > commons-fileupload那所有的请求信息都解析为FileItem对象，无论是一般的表单域还是文件域
+ > 可以调用FileItem的isFormField()方法来判断是一个表单域或不是表单域(则是一个文件域)
+ 
+ if (item.isFormField()) {
+					String name = item.getFieldName();
+					String value = item.getString();
+					
+					System.out.println(name + "::" + value);
+				}
+    
+  if(!item.isFormField()){
+     String fieldName = item.getFieldName();
+				 String fileName = item.getName();
+				 String contentType = item.getContentType();
+				 long sizeInBytes = item.getSize();
+  }
+
 1.使用fileupload组建完成文件的上传应用
 
 1).需求：
