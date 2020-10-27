@@ -1,0 +1,50 @@
+1.什么是国际化和本地化：
+
+Ⅰ. 本地化：一个软件在某个国家或地区使用时，采用该国家或地区的语言，数字，货币，日期等习惯。
+Ⅱ. 国际化：软件开发时，让他能支持多个国家和地区的本地化应用，使得应用软件能够适应多个地区的语言和文化风俗习惯。
+Ⅲ. 本地敏感数据：随用户区域信息而变化的数据称为本地信息敏感数据。例如数字，货币，日期，时间等数据
+
+2. 相关的API：
+
+Ⅰ. DateForamt和SimpleDateFormat √.
+Ⅱ. NumberFormat
+Ⅲ. MessageFormat
+Ⅳ. ResourceBundle
+Ⅴ. Locale
+
+3.关于国际化资源文件：
+
+Ⅰ. properties文件格式
+Ⅱ. 必须提供基名.properties文件和基名_语言_国家代码.properties文件
+Ⅲ. 相同的基名的资源文件必须有相同的key
+Ⅳ. 可能需要使用native2ascii工具把非asc码转为asc码
+
+4.WEB的国际化
+
+Ⅰ. 可以使用request.getLocale()获取Locale对象
+Ⅱ. 可以使用JSTL的fmt标签完成国际化，后面使用框架提供的标签完成.
+Ⅲ. 实现“中文”“英文”的切换：
+  
+  > 提供两个超链接,携带不同的变量值
+  > 根据变量值确定对应的Locale对象
+  > 把Locale对象放入到session中
+  > 绑定Locale对应的资源文件
+  
+Ⅳ. 其他fmt参考standard-examples.war中的例子
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
