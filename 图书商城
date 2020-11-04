@@ -1,0 +1,20 @@
+1. 查看图书的详细信息
+
+1). 在超链接后面附带id
+
+<a href="bookServlet?method=getBooks&pageNo=${bookpage.pageNo }&id=${book.BOOK_ID}">${book.TITLE }</a>
+
+2). 对从页面传入的请求参数，若要求改该请求参数为整形的字符串，类似于“1”， 在Controller中的建议处理方案：
+
+int id = -1;
+
+try {
+			id = Integer.parseInt(idStr);
+		} catch (Exception e) {}
+    
+if(id > 0)
+		book = bookService.getBook(id);
+    
+3). 查询条件的隐藏域和JS代码的可重用性解决方案：把相同的代码放入到一个JSP中，各个页面包含该JSP即可：
+
+<%@ include file="/commons/queryCondition.jsp" %>
