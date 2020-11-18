@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+ PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-config.dtd">
+ 
+ <!-- 
+ 	myBatis配置文件中
+ 	<configuration>：该元素为根节点
+ 	支持properties、typeAliases、environments、mappers等子元素
+ 	
+ 	<properties>: 该元素用于加载属性文件
+ 	
+ 	<typeAliases>: 该元素用于给包中的类注册别名,注册后可以直接使用别名，而不用使用全限定的类名(就是不用包含包名)
+ 	
+ 	<environments>: 该元素用于环境配置，也就是数据源配置。<environments元素体重可以配置多个数据库环境，default
+ 	属性用于指定默认使用的某种环境的ID值。
+ 		<environment>:每个数据库通过该子元素配置，其id属性用于指定该环境的ID值。
+ 			<transactionManager>:该子元素配置事务管理
+ 				type:该属性用于指定事务管理类型，取值可以是JDBC(基于JDBC的事务)和MANAGED(托管的事务)。
+ 				设置成JDBC，MyBatis依赖于从数据源得到的连接来管理事务，即使用java.sql.Connection对象完成对事务的提交、回滚。
+ 				设置成MANAGED，MyBatis自身不会去实现事务管理，它会让容器来管理事务的整个生命周期
+ 			<dataSource>:该子元素声明数据源。
+ 				type:该属性用于指定数据源的类型。可取值为UNPOOLED,POOLED和JNDI。
+ 					UNPOOLED:MyBatis会为每一次数据库操作创建一个新的连接，并关闭该连接。
+ 					POOLED:MyBatis会创建一个数据库连接池，数据库操作时从连接池中获取一个连接，操作完成后再将连接归还给连接池
+ 					JNDI:MyBatis从配置好的JNDI数据源获取数据库连接
+ 					
+ 					并发用户规模不大时用UNPOOLED，测试和开发过程一般用POOLED，实际运行使用JNDI
+ 					
+ 	<mappers>: 该元素用于指定MyBatis映射文件的位置,每个映射文件的位置通过<mapper>子元素的resource属性来指定
+ 
+  -->
+<configuration>
+	<!-- 加载属性文件 -->
+	<properties resource="db.properties"></properties>
+	<!-- 给包中的类注册别名 -->
+	<typeAliases>
+		<package name="cn.zhangfl.mybatis.pojo"/>
+	</typeAliases>
+	<!-- 配置环境 -->
+	<environments default="development">
+	 	<!-- 配置一个id为 development的环境 -->
+		<environment id="development">
+			<!--使用JDBC事务  -->
+			<transactionManager type="JDBC"/>
+			<!-- 数据库连接池 -->
+			<dataSource type="POOLED">
+				 <property name="driver" value="${jdbc.driver}"/>
+				 <property name="url" value="${jdbc.url}"/>
+				 <property name="username" value="${jdbc.username}"/>
+				 <property name="password" value="${jdbc.password}"/>
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<!-- 引用映射文件 -->
+	<mappers>
+		<mapper resource="cn/zhangfl/mybatis/mapper/UserInfoMapper.xml"/>
+	</mappers>
+</configuration>
