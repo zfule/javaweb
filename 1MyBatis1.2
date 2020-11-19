@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+ 
+
+<!-- SQL映射的XML文件 -->
+<!-- 
+	<mapper>:根节点
+		namespace:该属性指定,<mapper>唯一命名空间；格式：包名+SQL映射文件名
+		根节点支持的元素：
+			insert,update,delete,select,cache,cache-ref,resultMap,parameterMap和sql共九个元素
+ -->
+<mapper namespace="cn.zhangfl.mybatis.mapper.UserInfoMapper">
+ 	<!-- 根据用户编号查询用户信息 -->
+ 	<!-- 
+ 		<select>:该元素用于映射查询语句
+ 		id:该属性是该元素在映射文件中的唯一标识符
+ 		parameterType:该属性用于指定传递给SQL语句的参数类型,可以是int,long,String，也可以是复杂类型(如对象)
+ 		resultType:该属性用于指定返回结果的类型。这里设置为UserInfo，表示将查询结果封装到UserInfo类型的对象中
+ 		#{}:表示一个占位符，相当于?。#{id}表示该占位符接收的参数名为id
+ 	 -->
+ 	<select id="findUserInfoById" parameterType="int" resultMap="userInfoMap">
+ 		select * 
+ 			from user_info where id = #{id}
+ 	</select>
+ 	<resultMap type="UserInfo" id="userInfoMap">
+ 		<id property="uid" column="id"/>
+ 		<result property="uname" column="userName"/>
+ 		<result property="upass" column="password"/>
+ 	</resultMap>
+ 	
+ 	<!-- 根据用户名模糊查询用户 -->
+ 	<select id="findUserInfoByUserName" parameterType="String" resultType="UserInfo">
+ 		select * from user_info 
+ 		where userName like CONCAT(CONCAT('%', #{userName}), '%')
+ 	</select>
+ 	
+ 	<!-- 添加用户 -->
+ 	<!-- 
+ 		parameterType="UserInfo"表示传入SQL插入语句的参数类型为UserInfo
+ 		#{userName}, #{password}占位符接收的参数名分别来自UserInfo对象的userName和password属性
+ 	 -->
+ 	<insert id="addUserInfo" parameterType="UserInfo">
+ 		insert into
+ 			user_info(userName, password) values(#{userName}, #{password})
+ 	</insert>
+ 	
+ 	<!-- 修改用户信息 -->
+ 	<update id="updateUserInfo" parameterType="UserInfo">
+ 		update user_info set
+ 			userName = #{userName}, password = #{password} where id = #{id}
+ 	</update>
+ 	
+ 	<!-- 根据用id删除用户 -->
+ 	<delete id="deleteUserInfo" parameterType="int">
+ 		delete from user_info
+ 			where id = #{id}
+ 	</delete>
+ 	
+</mapper>
+ 	
