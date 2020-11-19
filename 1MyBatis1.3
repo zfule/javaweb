@@ -1,0 +1,67 @@
+package cn.zhangfl.mybatis.mapper;
+
+import cn.zhangfl.mybatis.pojo.UserInfo;
+
+/**
+ * 使用Mapper接口执行SQL
+ * 
+ * 1. 映射文件的namespace与接口类路径(全类名)相同
+ * 2. 接口中，方法名与映射文件中<select>元素的id值相同
+ * 3. 方法输入参数类型与映射文件中parameterType类型相同
+ * 4. 方法输出参数类型与映射文件中resultType类型相同
+ * @author 17799
+ *
+ */
+public interface UserInfoMapper {
+	UserInfo findUserInfoById(int id);
+
+}
+
+#############################################
+package cn.zhangfl.mybatis.test;
+
+
+public class MyBatisTest {
+	
+	private SqlSessionFactory sqlSessionFactory;
+	private SqlSession sqlSession;
+	
+	@Before
+	public void init() {
+		//读取mybatis配置文件
+		String resource = "mybatis-config.xml";
+		InputStream inputStream;
+		try {
+			//得到配置文件流
+			inputStream = Resources.getResourceAsStream(resource);
+			//根据配置文件信息，创建会话工厂
+			sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
+			//通过工厂得到SqlSession
+			sqlSession = sqlSessionFactory.openSession();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	//根据用户id查询用户
+	@Test
+	public void testFindUserInfoById() {
+		
+		//获得UserInfoMapper接口的代理对象
+		UserInfoMapper uim = sqlSession.getMapper(UserInfoMapper.class);
+		//直接调用接口方法，查询编号为1的UserInfo对象
+		UserInfo ui = uim.findUserInfoById(1);
+		//打印输出结果
+		System.out.println(ui.toString());	
+	}
+  
+  @After
+	public void destroy() {
+		//提交事务
+		sqlSession.commit();
+		//关闭sqlSession
+		sqlSession.close();
+	}
+	
+
+}
