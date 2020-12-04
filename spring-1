@@ -1,0 +1,57 @@
+1.一般方法与使用spring 获取对象实例的对比
+
+创建HelloWorld.java
+public class HelloWorld {
+
+	private String name;
+	
+	public void setName(String name) {
+		System.out.println("setName:" + name);
+		this.name = name;		
+	}
+	
+	public void hello() {
+		System.out.println("hello:" + name);
+	}
+	
+	public HelloWorld() {
+		System.out.println("HelloWorld's Constructor...");
+	}
+}
+
+创建spring配置文件applicationContext.xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+<!-- 配置bean -->
+<bean id="helloWorld" class="cn.zhangfl.spring.beans.HelloWorld">
+	<property name="name" value="Spring"></property>
+</bean>
+
+</beans>
+
+
+public class Main {
+	public static void main(String[] args) {
+  
+//一般方法
+
+   // 1. 创建HelloWorld对象 
+	  HelloWorld helloWorld = new HelloWorld(); 
+	 // 2. 为name赋值
+		helloWorld.setName("zfl");
+   // 3. 调用hello方法
+    helloWorld.hello();
+    
+//使用spring框架
+
+  //1. 创建Spring的IOC容器对象
+  ApplicationContext ctx = new ClassPathXmlApplicationContext("applicationContext.xml");
+  //2. 从IOC容器对象中获取Bean实例
+  HelloWorld helloWorld = (HelloWorld) ctx.getBean("helloWorld");
+  //3. 调用hello方法
+  helloWorld.hello();
+  }
+}
