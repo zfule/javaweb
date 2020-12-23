@@ -1,0 +1,65 @@
+SSM整合中Ajax发送PUT请求到Tomcat服务器，出现异常
+//Ajax请求
+$.ajax({
+				url:"${APP_PATH}/emp/"+$(this).attr("edit-id"),
+				type:"PUT",
+				data:$("#empUpdateModal form").serialize(),
+				success:function(result){
+					//alert(result.msg);
+					//1. 关闭模态框
+					$("#empUpdateModal").modal("hide");
+					
+					//2.回到本页面
+					to_page(currentPage);
+				}
+			});
+Controller
+	/**
+	 * 员工更新方法
+	 * @param employee
+	 * @return
+	 */
+	@RequestMapping(value = "/emp/{empId}", method = RequestMethod.PUT)
+	@ResponseBody
+	public Msg saveEmp(Employee employee) {
+		System.out.println("EmployeeController 154行>>>" + employee);
+		employeeService.updateEmp(employee);
+		return Msg.success();
+	}
+
+解决方案：
+1.web.xml添加
+	<!-- 4. 使用REST风格URI, 将页面普通的post请求转化为指定的delete或者put请求 -->
+	<filter>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HiddenHttpMethodFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>HiddenHttpMethodFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<filter>
+		<filter-name>HttpPutFormContentFilter</filter-name>
+		<filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>HttpPutFormContentFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+2.Ajax请求改为
+$.ajax({
+				url:"${APP_PATH}/emp/"+$(this).attr("edit-id"),
+				type:"POST", //改为"POST"
+				data:$("#empUpdateModal form").serialize()+"&_method=PUT", //添加"&_method=PUT"
+				success:function(result){
+					//alert(result.msg);
+					//1. 关闭模态框
+					$("#empUpdateModal").modal("hide");
+					
+					//2.回到本页面
+					to_page(currentPage);
+				}
+			});
+
