@@ -2,12 +2,232 @@
 
 1. Java JUC简介
 2. volatile关键字-内存可见性
+package cn.zhangfl.juc;
+
+public class TestVolation {
+	public static void main(String[] args) {
+		ThreadDemo threadDemo = new ThreadDemo();
+		new Thread(threadDemo).start();
+		
+		//System.out.println(threadDemo.isFlag());
+		
+		while (true) {
+			System.out.println("threadDemo.isFlag() = " + threadDemo.isFlag());
+			if (threadDemo.isFlag()) {
+				System.out.println("-----------");
+				break;
+			}
+		}
+	}
+}
+
+class ThreadDemo implements Runnable{
+	
+	private volatile boolean flag = false;
+
+	@Override
+	public void run() {
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {}
+		
+		flag = true;
+		
+		System.out.println("flag = " + isFlag() );
+	}
+
+	public boolean isFlag() {
+		return flag;
+	}
+
+	public void setFlag(boolean flag) {
+		this.flag = flag;
+	}
+	
+	
+	
+}
+
 3. 原子变量-CAS算法
+package cn.zhangfl.juc;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
+/**
+ * 二、原子变量：jdk1.5之后java.util.concurrent.atomic包下提供了常用的原子变量
+ * 				1. volatile保证内存可见性
+ * 				2. CAS(Compare-And-Swap)算法保证数据的原子性
+ * 					CAS算法是硬件对于并发操作共享数据的支持
+ * 					CAS包含了三个操作数:
+ * 						内存值 V
+ * 						预估值 A
+ * 						更新值 B
+ * 						当且仅当V==A时，V = B，否则，将不做任何操作
+ * 
+ * @author 17799
+ *
+ */
+
+public class TestAtomicDemo {
+	public static void main(String[] args) {
+		AtomicDemo atomicDemo = new AtomicDemo();
+		
+		for (int i = 0; i < 10; i++) {
+			new Thread(atomicDemo).start();
+		}
+	}
+}
+
+class AtomicDemo implements Runnable{
+//	private int serialNumber = 0;
+	
+	private AtomicInteger serialNumber = new AtomicInteger();
+	
+	@Override
+	public void run() {
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {}
+		
+		System.out.println(Thread.currentThread().getName() + ":" + getSerialNumber());
+	}
+
+	public int getSerialNumber() {
+		return serialNumber.getAndIncrement();
+	}		
+}
+
 4. ConcurrentHasMap锁分段机制
 5. CountDownloadLatch闭锁
 6. 实现Callable接口
 7. Lock同步锁
 8. Condition控制线程通信
+package cn.zhangfl.juc;
+
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
+/**
+ * 生产者和消费者
+ * @author 17799
+ *
+ */
+public class TestProductAndConsumerForLock {
+	public static void main(String[] args) {
+		Clerk clerk = new Clerk();
+		
+		Productor pro = new Productor(clerk);
+		Consumer cus = new Consumer(clerk);
+		
+		new Thread(pro, "生产者A").start();
+		new Thread(cus, "消费者B").start();
+		
+		new Thread(pro, "生产者C").start();
+		new Thread(cus, "消费者D").start();
+		
+	}
+}
+
+//店员
+class Clerk{
+	
+	private int product = 0;
+	
+	private Lock lock = new ReentrantLock();
+	private Condition condition = lock.newCondition();
+	
+	//进货
+	public void get() {
+		lock.lock();//上锁
+		
+		try {
+			while (product >= 1) { //为了避免虚假唤醒问题，应该总是使用在循环中
+				System.out.println("产品已满！");		
+				//产品已满，就停止生产，等待唤醒后再次进货
+				try {
+//					this.wait();
+					condition.await();
+				} catch (InterruptedException e) {}
+			}
+			System.out.println(Thread.currentThread().getName() + " : " + ++product);	
+			//生产者成功生产一个产品，说明已经有多余产品用于销售，可以消费一个产品，
+//			this.notifyAll();
+			condition.signalAll();
+		} finally {
+			lock.unlock();//释放锁
+		}
+		
+	}
+	
+	//卖货
+	public void sale() {
+		lock.lock();
+	
+		try {
+			while (product <= 0) {
+				System.out.println("缺货！");
+				
+				//产品缺货，停止销售，等待唤醒后再次销售
+				try {
+//					this.wait();
+					condition.await();
+				} catch (InterruptedException e) {}			
+			}
+			System.out.println(Thread.currentThread().getName() + " : " + --product);
+//			this.notifyAll();
+			condition.signalAll();
+		} finally {
+			lock.unlock();
+		}
+		
+	}
+	
+}
+
+//生产者
+class Productor implements Runnable{
+	private Clerk clerk;
+	
+	public Productor(Clerk clerk) {
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {}
+		
+		this.clerk = clerk;
+	}
+	
+	@Override
+	public void run() {
+		for (int i = 0; i < 20; i++) {
+			clerk.get();
+		}
+		
+	}
+	
+	
+}
+
+//消费者
+class Consumer implements Runnable{
+	private Clerk clerk;
+	
+	public Consumer (Clerk clerk) {
+		this.clerk = clerk;
+	}
+	
+	@Override
+	public void run() {
+		for (int i = 0; i < 20; i++) {
+			clerk.sale();
+		}
+		
+	}
+}
+
+
 9. 线程八锁
 package cn.zhangfl.juc;
 
@@ -431,3 +651,110 @@ public class TestScheduledThreadPool {
 }
 
 14. ForkJoinPool分支/合并框架 工作窃取
+package cn.zhangfl.juc;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+import java.util.concurrent.RecursiveTask;
+import java.util.stream.LongStream;
+
+import org.junit.Test;
+
+public class TestForkJoinPool {
+	public static void main(String[] args) {
+		Instant start = Instant.now();
+		
+		ForkJoinPool pool = new ForkJoinPool();
+		
+		ForkJoinTask<Long> task = new ForkJoinSumCalculate(0L, 10000000000L);
+		
+		Long sum = pool.invoke(task);
+		
+		System.out.println(sum);
+		
+		Instant end = Instant.now();
+		
+		System.out.println("耗费时间main:" + Duration.between(start, end).toMillis());//76 //2442
+	}
+	
+	
+	@Test
+	public void test1() {
+		Instant start = Instant.now();
+		
+		long sum = 0L;
+		for (long i = 0L; i <= 10000000000L; i++) {
+			sum += i;
+		}
+		System.out.println(sum);
+		
+		Instant end = Instant.now();
+		
+		System.out.println("耗费时间test:" + Duration.between(start, end).toMillis());//54 //3608
+	}
+	
+	//Java8新特性
+	@Test
+	public void test2() {
+		Instant start = Instant.now();
+		
+		Long sum = LongStream.rangeClosed(0L, 10000000000L).parallel().reduce(0L, Long::sum);
+		
+		System.out.println(sum);
+		
+		Instant end = Instant.now();
+		
+		System.out.println("耗费时间test:" + Duration.between(start, end).toMillis());//1475
+				
+	}
+
+}
+
+class ForkJoinSumCalculate extends RecursiveTask<Long>{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	private long start;
+	private long end;
+	
+	private static final long THURSHOLD = 10000L; //临界值
+	
+	public ForkJoinSumCalculate(long start, long end) {
+		this.start = start;
+		this.end = end;
+		
+	}
+
+	@Override
+	protected Long compute() {
+		long length = end - start;
+		if (length <= THURSHOLD) {
+			long sum = 0L;
+			
+			for (long i = start; i <= end; i++) {
+				sum += i;
+			}
+			
+			return sum;
+		}else {
+			long middle = (start + end) / 2;
+			
+			ForkJoinSumCalculate left =  new ForkJoinSumCalculate(start, middle);
+			left.fork(); //进行拆分，同时压入线程队列
+			
+			ForkJoinSumCalculate right = new ForkJoinSumCalculate(middle + 1, end);
+			right.fork();
+			
+			return left.join() + right.join();
+		}
+		
+		
+	}
+	
+}
+
