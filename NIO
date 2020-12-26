@@ -3,3 +3,6 @@ IO                          NIO
 面向流(Stream Oriented)；   面向缓冲区(Buffer Oriented);
 阻塞IO(Blocking IO);        非阻塞IO(Non Blocking IO);
 (无);                       选择器(Selectors);
+1.1 通道(Channel)与缓冲区(Buffer)
+通道负责传输(传输通道)
+缓冲区负责存储(数据存储)
