@@ -1,1 +1,14 @@
+1. Git基本操作
+
+1.1 查看状态
+git status
+查看暂存区、工作区状态
+
+1.2 添加操作
+git add [filename]
+将工作区的“新增/修改”添加到暂存区
+
+1.3 提交操作
+git commit -m "commit message" [filename]
+将暂存区的内容提交到本地库
 
