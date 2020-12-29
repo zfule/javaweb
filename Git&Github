@@ -12,3 +12,50 @@ git add [filename]
 git commit -m "commit message" [filename]
 将暂存区的内容提交到本地库
 
+1.4 查看历史记录
+git log显示详细日志
+commit 895ddba9da7d512855263887e5a60c8915612d51 (HEAD -> master)
+Author: zhangfl_pro <zfl_happy_pro@qq.com>
+Date:   Tue Dec 29 09:00:41 2020 +0800
+
+    insert yuan
+
+commit 5c41c90f600bf37aaf1289c0da33045a2faba7e4
+Author: zhangfl_pro <zfl_happy_pro@qq.com>
+Date:   Tue Dec 29 08:59:55 2020 +0800
+
+    insert qing
+
+(多屏显示控制方式:空格向下翻页；b向上翻页；q退出)
+
+git log --pretty=oneline 每个日志显示单行(哈希值，指针位置，日志内容)
+9208129057ebe90ed2bba282c72448e2582707b8 (HEAD -> master) for test history
+20941907a931c84fbc22102fde83f4417d311cec My second commit, modify good.txt
+6b8d0c9c5087f8e0c875885abd41bfe2730bdc68 My first commit new file good.txt
+
+
+git log --oneline 每个日志显示单行(部分哈希值，指针位置，日志内容)
+9208129 (HEAD -> master) for test history
+2094190 My second commit, modify good.txt
+6b8d0c9 My first commit new file good.txt
+
+
+git reflog 每个日志显示单行(部分哈希值，指针位置，HEAD@{移动到当前版本需要多少步}，日志内容)
+9208129 (HEAD -> master) HEAD@{0}: reset: moving to 9208129
+90742d8 HEAD@{1}: commit: insert song
+895ddba HEAD@{2}: commit: insert yuan
+5c41c90 HEAD@{3}: commit: insert qing
+
+
+1.5 前进后退
+1.5.1 基于索引值操作【推荐】
+git reset --hard [部分哈希值]: git reset --hard 5c41c90
+1.5.2 使用^符号: 只能后退
+git reset --hard HEAD^ : 一个^代表后退一步，几个^代表后退几步
+git reset --hard HEAD^^^^: 后退4步
+1.5.3 使用~符号: 只能后退
+git reset --hard HEAD~4: 表示后退4步
+git reset --hard HEAD~n: 表示后退n步
+--
+
+
