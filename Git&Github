@@ -56,6 +56,32 @@ git reset --hard HEAD^^^^: 后退4步
 1.5.3 使用~符号: 只能后退
 git reset --hard HEAD~4: 表示后退4步
 git reset --hard HEAD~n: 表示后退n步
---
 
+1.6 reset命令的三个参数对比
+--soft参数
+仅仅本地库移动HEAD指针
+
+--mixed参数
+在本地库移动HEAD指针
+重置暂存区
+
+--hard参数
+在本地库移动HEAD指针
+重置暂存区
+重置工作区
+
+1.7 删除文件并找回
+前提: 删除前，文件存在时的状态提交到本地库。
+操作: git reset --hard [指针位置]
+删除操作已经提交到本地库: 指针位置指向历史记录
+删除操作尚未提交到本地库: 指针位置使用HEAD
+
+2. 分支操作
+
+创建分支
+git branch [分支名]
+查看分支
+git branch -v
+切换分支
+git checkout [分支名]
 
