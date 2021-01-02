@@ -101,7 +101,31 @@ git checkout [分支名]
         第三步:git add [文件名]
         第四步:git commit -m "日志信息"    #注意:此时commit一定不能带具体文件名
             
-        
+3.GitHub远程库操作:
+    3.1push推送
+    给github url起别名并保存:
+    git remote add origin https://github.com/zfule/huashan.git (url保存到变量origin中)
+    查看别名
+    git remote -v
+    推送到远程库
+    git pust [远程库url] [分支名]
+    git push origin master
+    
+    3.2克隆
+    命令 git clone [要克隆的远程库url]
+    $ git clone https://github.com/zfule/huashan.git
+    Cloning into 'huashan'...
+    remote: Enumerating objects: 3, done.
+    remote: Counting objects: 100% (3/3), done.
+    Receiving objects: 100% (3/3), done.
+    remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
+    效果
+    
+
+    
+
+    
+
     
     
 
