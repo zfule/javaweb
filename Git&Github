@@ -119,7 +119,10 @@ git checkout [分支名]
     remote: Counting objects: 100% (3/3), done.
     Receiving objects: 100% (3/3), done.
     remote: Total 3 (delta 0), reused 3 (delta 0), pack-reused 0
-    效果
+    效果:
+        完整的把远程库下载到本地
+        创建origin远程库地址别名
+        初始化本地库
     
 
     
